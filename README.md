@@ -77,28 +77,4 @@ The lab utilizes a hub-and-spoke model to decouple endpoint log generation from 
 
 ---
 
-## Data Segregation & Index Storage Layer
-
-To prevent index pollution and optimize Search Processing Language (SPL) query execution, log data is partitioned by operating system platform:
-* **`windows_logs`**: Encapsulates structured Windows Event Log channels (Event IDs 4624, 4625, etc.) originating from `Win11-Endpoint`.
-* **`linux`**: Captures unstructured system messages, shell events, and authentication logs (`/var/log/syslog`, `/var/log/auth.log`) from `Linux-Endpoint-SRV`.
-
----
-
-## Operational Pipeline Validation
-
-To confirm log fidelity and pipeline stability across endpoints, targeted SPL queries were executed in Splunk Web:
-
-### Linux Log Stream Verification
-```spl
-index="linux" | stats count by host, sourcetype
-```
-* **Result:** Confirmed active event streams from `Linux-Endpoint-SRV`, tracking local authentication and system events.
-
-### Windows Event Stream Verification
-```spl
-index="windows_logs" | top limit=10 EventCode
-```
-* **Result:** Parsed structured security events, registering critical Windows Event Codes such as **4624** *(Successful Account Logon)* and **4625** *(Failed Account Logon)*.
-
 ---
